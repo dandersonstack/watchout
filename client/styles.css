@@ -3,3 +3,18 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
+.scores {
+  display: inline-block;
+}
+.title {
+  display: inline-block;
+  text-orientation: center;
+}
+
+.contributors {
+  display: inline-block;
+  
+}
+.column-left{ float: left; width: 25%; }
+.column-right{ float: right; width: 33%; }
+.column-center{ display: inline-block; width: 33%; }

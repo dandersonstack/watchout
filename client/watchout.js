@@ -1,6 +1,6 @@
 class WatchOutGame {
   constructor() {
-    this.createEnemiesArray(10);
+    this.createEnemiesArray(15);
     this.drawEnemies();
     this.drawPlayer();
     setTimeout(()=>{ this.play(); }, 1000);
@@ -20,7 +20,6 @@ class WatchOutGame {
       let xDiff = parseFloat(watchOutGame.players[0].x) - parseInt(this.attributes.cx.value);
       let yDiff = parseFloat(watchOutGame.players[0].y) - parseInt(this.attributes.cy.value);
       let separation = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-      //console.log('seperation ', separation, 'radiusSum ', radiusSum);
       if (separation < radiusSum) {
         collision = true;
       }
@@ -95,8 +94,6 @@ class WatchOutGame {
   }
 
   drawEnemies() {
-    // var boardHeight = d3.select('.board').node().getBoundingClientRect().top;
-    // var boardWidth = d3.select('.board').node().getBoundingClientRect().width;
     var scoreBoardHeight = d3.select('.scoreboard').node().getBoundingClientRect().height;
     var body = d3.select('body')
       .selectAll('.board')   
@@ -138,8 +135,6 @@ class Player {
     this.className = 'player';
     this.x = 0;
     this.y = 0;
-    //this.x = d3.select('.svg').node().getBoundingClientRect().width / 2;
-    //this.y = d3.select('.svg').node().getBoundingClientRect().height / 2;
   } 
 }
 
