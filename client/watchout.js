@@ -4,42 +4,36 @@ class WatchOutGame {
     this.drawEnemies();
     this.drawPlayer();
     setTimeout(()=>{ this.play(); }, 1000);
+    this.checkCollisions();
+    this.collision = 0;
     this.highScore = 0;
+    this.currentScore = 0;
     setTimeout(()=>{ this.scoreTicker(); }, 1000);
   }
   
-  // collide() {
-    
-        
-  //   var asteroids = d3.selectAll('circle');
-    
-  //   const checkCollision = function(player, collidedCallback) {
-  //     asteroids.each(function(enemy) {
-  //      // debugger;
-  //       let radiusSum = parseFloat(player.attr('width') / 2) + enemy.attr('r');
-  //       let xDiff = parseFloat(playr.attr('height') / 2) - enemy.attr('cx');
-  //       let yDiff = parseFloat(player.attr('width') / 2) - enemy.attr('cy');
-
-  //       let separation = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-  //       console.log('seperation ', seperation, 'radiusSum ', radiusSum);
-  //       return function(player, enemy) { return separation < radiusSum; };
-  //     });
-  //   };
-    
-  //   var player = d3.selectAll('rect');
-  //   var asteroids = d3.selectAll('circle');
-    
-  //   if (checkCollision(this.player)) {
-  //     console.log('checkCollision is true');
-  //   };
-
-    
-    
-    
-    
-  //   console.log("It is colliding");
-  //   return true;
-  // }
+  collide() {
+    var asteroids = d3.selectAll('circle');
+    var player = d3.selectAll('rect');
+    let collision = false;
+    asteroids.each(function(enemy) {
+      let radiusSum = parseFloat(player[0][0].attributes.width.value / 2) + parseInt(this.attributes.r.value);
+      let xDiff = parseFloat(watchOutGame.players[0].x) - parseInt(this.attributes.cx.value);
+      let yDiff = parseFloat(watchOutGame.players[0].y) - parseInt(this.attributes.cy.value);
+      let separation = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+      //console.log('seperation ', separation, 'radiusSum ', radiusSum);
+      if (separation < radiusSum) {
+        collision = true;
+      }
+    });
+    if (collision) {
+      if (watchOutGame.currentScore > 5) {
+        this.collision++;
+        d3.select('.collisions').text('Collisions: ' + watchOutGame.collision);
+      }
+      watchOutGame.currentScore = 0;
+    }
+    return true;
+  }
   
   createEnemiesArray(number) {
     this.enemiesArray = [];     
@@ -50,37 +44,42 @@ class WatchOutGame {
   
   
   scoreTicker() {
-    var currentScore = 0;
     setInterval(function() {
-      d3.select('.current').text('Current score ' + currentScore);
-      if (currentScore > watchOutGame.highScore) {
-        watchOutGame.highScore = currentScore;
+      d3.select('.current').text('Current score ' + watchOutGame.currentScore);
+      if (watchOutGame.currentScore > watchOutGame.highScore) {
+        watchOutGame.highScore = watchOutGame.currentScore;
       }
       d3.select('.highscore').text('High score ' + watchOutGame.highScore);
-      currentScore++;
+      watchOutGame.currentScore++;
     }, 100);
   }
   
-  play() {  
-    
+  checkCollisions() {
+    setInterval(function() { watchOutGame.collide(); }, 20);
+  }
+  
+  play() {
+    watchOutGame.collide();
     d3.selectAll('circle')
       .transition()
         .duration(950)
         .attr('cx', function(d) { return d.getXCoord(); } )
-        .attr('cy', function(d) { return d.getYCoord(); } )
-        // .call(()=> { this.collide(); } );
-    setTimeout(()=>{ this.play(); }, 1500);
-    
+        .attr('cy', function(d) { return d.getYCoord(); } );
+    watchOutGame.collide();
+    setTimeout(()=>{ this.play(); }, 1500);  
   }
   
   drawPlayer() {
     var drag = d3.behavior.drag()
-      .on('drag', function(d, i) {
+      .on('drag', function(d) {
         d.x += d3.event.dx;
         d.y += d3.event.dy;
-        d3.select(this).attr('transform', function(d, i) {
+        watchOutGame.players[0].x = d.x;
+        watchOutGame.players[0].y = d.y;
+        d3.select(this).attr('transform', function(d) {
           return 'translate(' + [ d.x, d.y ] + ')';
         } );
+        
       } );
     
     this.players = [new Player()];
@@ -137,10 +136,10 @@ class Asteroid {
 class Player {
   constructor() {
     this.className = 'player';
-    this.x = 0
-    this.y = 0
-    // this.x = d3.select('.svg').node().getBoundingClientRect().width / 2;
-    // this.y = d3.select('.svg').node().getBoundingClientRect().height / 2;
+    this.x = 0;
+    this.y = 0;
+    //this.x = d3.select('.svg').node().getBoundingClientRect().width / 2;
+    //this.y = d3.select('.svg').node().getBoundingClientRect().height / 2;
   } 
 }
 
